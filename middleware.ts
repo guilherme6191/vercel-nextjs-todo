@@ -12,11 +12,6 @@ export default async function middleware(req: NextRequest) {
 
   const response = NextResponse.next();
 
-  Object.entries(securityHeaders).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
-  response.headers.set('Content-Security-Policy', csp);
-
   return response;
 }
 
