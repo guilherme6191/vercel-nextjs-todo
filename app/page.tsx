@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { unstable_getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import { GithubLogin } from '@/components/github-login';
 
 function ActionButton({ isAuthed }: { isAuthed: boolean }) {
@@ -27,7 +27,7 @@ function ActionButton({ isAuthed }: { isAuthed: boolean }) {
   );
 }
 export default async function Home() {
-  // const isAuthenticated = Boolean(await unstable_getServerSession(authConfig));
+  // const isAuthenticated = Boolean(await getServerSession(authConfig));
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">

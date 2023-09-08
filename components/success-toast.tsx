@@ -1,6 +1,6 @@
 export const SuccessToast = () => (
   <div
-    className="absolute flex items-center w-full max-w-xs p-4 mb-4 bg-black border-2 rounded-lg shadow-md right-4 bottom-10 border-fuchsia-400 shadow-fuchsia-200 animate-bounce"
+    className="absolute flex items-center w-full max-w-xs p-4 mb-4 bg-black border-2 rounded-lg right-4 bottom-10 border-cyan-400 animate-bounce"
     role="alert"
   >
     <div className="inline-flex items-center justify-center flex-shrink-0 ">
@@ -11,7 +11,7 @@ export const SuccessToast = () => (
         strokeWidth={1.5}
         stroke="currentColor"
         aria-hidden
-        className="w-6 h-6 text-fuchsia-300"
+        className="w-6 h-6 text-cyan-300"
       >
         <path
           strokeLinecap="round"
@@ -20,6 +20,6 @@ export const SuccessToast = () => (
         />
       </svg>
     </div>
-    <div className="ml-3 text-2xl font-normal text-fuchsia-200">Task saved!</div>
+    <div className="ml-3 text-2xl font-normal text-cyan-200">List saved!</div>
   </div>
 );

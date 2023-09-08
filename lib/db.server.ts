@@ -53,3 +53,10 @@ export const toggleTodo = async (id: TodosRecord['id'], is_done: TodosRecord['is
 
   return newTodo;
 };
+
+export const deleteTodo = async (id: TodosRecord['id']) => {
+  const res = await xata.db.todos.delete(id);
+  console.log('🚀 ~ file: db.server.ts:59 ~ deleteTodo ~ res:', res);
+
+  return res;
+};

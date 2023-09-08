@@ -8,7 +8,7 @@ export function TodoAdd({ userEmail }: { userEmail: string }) {
   const [newTodoMessage, setNewTodoMessage] = useState('');
 
   useEffect(() => {
-    let clearMutation = undefined;
+    let clearMutation: NodeJS.Timeout | undefined = undefined;
 
     if (addTodo.isSuccess) {
       setNewTodoMessage('');
