@@ -7,8 +7,8 @@ import { headers } from 'next/headers';
 import { useSession } from 'next-auth/react';
 
 async function getSession(cookie: string): Promise<Session> {
-  console.log('LOGGING - NEXT_PUBLIC_VERCEL_URL:', process.env.NEXT_PUBLIC_VERCEL_URL);
-  const response = await fetch(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/auth/session`, {
+  console.log('LOGGING - getting session - NEXT_PUBLIC_VERCEL_URL:', process.env.NEXT_PUBLIC_VERCEL_URL);
+  const response = await fetch(`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/auth/session`, {
     headers: {
       cookie,
     },
