@@ -1,32 +1,30 @@
-import { type TodoProps } from '~/lib/db.server'
-import { updateTodo } from '~/lib/db.client'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { type TodoProps } from '@/lib/db.server';
+import { updateTodo } from '@/lib/db.client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdateTodo = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation(updateTodo, {
     onMutate: async (updatedTodo) => {
-      await queryClient.cancelQueries(['todos', updatedTodo.id])
+      await queryClient.cancelQueries(['todos', updatedTodo.id]);
 
-      const previousTodos = queryClient.getQueryData<TodoProps[]>(['todos'])
+      const previousTodos = queryClient.getQueryData<TodoProps[]>(['todos']);
       // optimistic update
       queryClient.setQueryData(['todos'], (list: TodoProps[]) => {
-        return list.map((item) =>
-          item.id === updatedTodo.id ? updatedTodo : item
-        )
-      })
+        return list.map((item) => (item.id === updatedTodo.id ? updatedTodo : item));
+      });
 
-      return { previousTodos, updatedTodo }
+      return { previousTodos, updatedTodo };
     },
     onSettled: () => {
-      queryClient.invalidateQueries(['todos'])
+      queryClient.invalidateQueries(['todos']);
     },
 
     onError: (err, _updatedTodo, context) => {
-      console.log(err)
+      console.log(err);
       // return previous data on error
-      queryClient.setQueryData(['todos'], context.previousTodos)
+      queryClient.setQueryData(['todos'], context.previousTodos);
     },
-  })
-}
+  });
+};
