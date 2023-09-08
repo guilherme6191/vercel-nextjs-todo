@@ -11,8 +11,8 @@ export const useDeleteTodo = () => {
 
       const previousTodos = queryClient.getQueryData<TodoProps[]>(['todos']);
       // optimistic update
-      queryClient.setQueryData(['todos'], (list: TodoProps[]) => {
-        return list.filter((item) => item.id !== todoId);
+      queryClient.setQueryData(['todos'], (list: TodoProps[] | undefined) => {
+        return (list || []).filter((item) => item.id !== todoId);
       });
 
       return { previousTodos, todoId };
@@ -24,7 +24,7 @@ export const useDeleteTodo = () => {
     onError: (err, _updatedTodo, context) => {
       console.log(err);
       // return previous data on error
-      queryClient.setQueryData(['todos'], context.previousTodos);
+      queryClient.setQueryData(['todos'], context?.previousTodos);
     },
   });
 };

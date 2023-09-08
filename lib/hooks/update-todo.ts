@@ -11,8 +11,8 @@ export const useUpdateTodo = () => {
 
       const previousTodos = queryClient.getQueryData<TodoProps[]>(['todos']);
       // optimistic update
-      queryClient.setQueryData(['todos'], (list: TodoProps[]) => {
-        return list.map((item) => (item.id === updatedTodo.id ? updatedTodo : item));
+      queryClient.setQueryData(['todos'], (list: Partial<TodoProps>[] | undefined) => {
+        return (list || []).map((item) => (item.id === updatedTodo.id ? updatedTodo : item));
       });
 
       return { previousTodos, updatedTodo };
@@ -24,7 +24,7 @@ export const useUpdateTodo = () => {
     onError: (err, _updatedTodo, context) => {
       console.log(err);
       // return previous data on error
-      queryClient.setQueryData(['todos'], context.previousTodos);
+      queryClient.setQueryData(['todos'], context?.previousTodos);
     },
   });
 };
