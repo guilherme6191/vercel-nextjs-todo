@@ -4,7 +4,6 @@ import { TodoProps, addTodo, fetchTodos, getTodoByMessage } from '@/lib/db.serve
 type ResponseData = TodoProps | { message: string };
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
   const { userEmail, newTodo } = JSON.parse(req.body);
-  console.log('🚀 ~ file: add-todo.ts:8 ~ constaddTodos:NextApiHandler= ~ newTodo:', newTodo);
 
   // force an error for demonstration purposes
   if (newTodo.message === 'invalid') {
