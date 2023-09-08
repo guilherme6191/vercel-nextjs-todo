@@ -7,11 +7,11 @@ export default async function middleware(req: NextRequest) {
   const token = await getToken({ req });
   const response = NextResponse.next();
 
-  Object.entries(securityHeaders).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
+  // Object.entries(securityHeaders).forEach(([key, value]) => {
+  //   response.headers.set(key, value);
+  // });
 
-  response.headers.set('Content-Security-Policy', csp);
+  // response.headers.set('Content-Security-Policy', csp);
 
   if (req.nextUrl.pathname.startsWith('/app') && !token) {
     console.log('AUTH REDIRECT:', process.env.NEXTAUTH_URL);
