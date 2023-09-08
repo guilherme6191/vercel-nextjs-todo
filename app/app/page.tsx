@@ -4,12 +4,10 @@ import Todos from './todos';
 import { Header } from '@/components/header';
 import { fetchTodos } from '@/lib/db.server';
 import { headers } from 'next/headers';
+import { useSession } from 'next-auth/react';
 
 async function getSession(cookie: string): Promise<Session> {
-  const baseUrl =
-    process.env.VERCEL_ENV === 'development' ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_VERCEL_URL;
-
-  const response = await fetch(`${baseUrl}/api/auth/session`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/auth/session`, {
     headers: {
       cookie,
     },
