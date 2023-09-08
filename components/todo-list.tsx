@@ -14,7 +14,6 @@ export function TodoList({ list }: { list: TodoProps[] }) {
           <label
             htmlFor={item.id}
             className="relative flex cursor-pointer items-center rounded-full p-3"
-            for={item.id}
             data-ripple-dark="true"
           >
             <input
