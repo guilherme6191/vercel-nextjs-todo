@@ -2,23 +2,27 @@ import { getXataClient } from '@/lib/xata.codegen.server';
 import NextAuth from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 
+if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
+  console.error('Missing GITHUB keys');
+}
+
 export const authConfig = {
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
   ],
 
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account }: any) {
       if (account) {
         token.accessToken = account.access_token;
       }
 
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       const access = `token ${token.accessToken}`;
       const profileResponse = await fetch('https://api.github.com/user', {
         headers: {
