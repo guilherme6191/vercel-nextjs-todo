@@ -36,7 +36,7 @@ export function TodoAdd({ userEmail }: { userEmail: string }) {
                 id: nanoid(),
                 message: newTodoMessage,
                 is_done: false,
-                created_at: new Date().toISOString(),
+                created_at: new Date(),
               });
             }}
           >

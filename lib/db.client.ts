@@ -1,8 +1,8 @@
-import type { TodoRecords, TodoProps } from './db.server';
+import type { Todos } from './xata.codegen.server';
 
 export const getTodos = async (userEmail: string) => {
   const res = await fetch(`/api/get-todos?userEmail=${userEmail}`);
-  const todos: TodoRecords = await res.json();
+  const todos = await res.json();
 
   return todos;
 };
@@ -20,7 +20,7 @@ export const updateTodo = async (checkbox: { id: string; checked: boolean; messa
   return newTodo;
 };
 
-export const addTodo = async (newTodo: TodoProps, userEmail: string) => {
+export const addTodo = async (newTodo: Todos, userEmail: string) => {
   const response = await fetch('/api/add-todo', {
     method: 'post',
     body: JSON.stringify({

@@ -1,6 +1,7 @@
-import { type TodoProps } from '@/lib/db.server';
+
 import { deleteTodo } from '@/lib/db.client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Todos } from '../xata.codegen.server';
 
 export const useDeleteTodo = () => {
   const queryClient = useQueryClient();
@@ -9,9 +10,9 @@ export const useDeleteTodo = () => {
     onMutate: async (todoId) => {
       await queryClient.cancelQueries(['todos', todoId]);
 
-      const previousTodos = queryClient.getQueryData<TodoProps[]>(['todos']);
+      const previousTodos = queryClient.getQueryData<Todos[]>(['todos']);
       // optimistic update
-      queryClient.setQueryData(['todos'], (list: TodoProps[] | undefined) => {
+      queryClient.setQueryData(['todos'], (list: Todos[] | undefined) => {
         return (list || []).filter((item) => item.id !== todoId);
       });
 

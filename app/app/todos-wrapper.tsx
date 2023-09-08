@@ -3,12 +3,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { TodoList } from '@/components/todo-list';
 import { getTodos } from '@/lib/db.client';
-import { TodoProps } from '@/lib/db.server';
+
 import { TodoAdd } from '@/components/todo-add';
+import { Todos } from '@/lib/xata.codegen.server';
 
 type Props = {
   userEmail: string;
-  initialTodos: TodoProps[];
+  initialTodos: Readonly<Todos>[];
 };
 
 export default function Todos({ initialTodos, userEmail }: Props) {
