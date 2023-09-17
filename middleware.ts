@@ -13,13 +13,15 @@ export default async function middleware(req: NextRequest) {
 
   // response.headers.set('Content-Security-Policy', csp);
   if (req.nextUrl.pathname == '/' && token) {
-    console.log('AUTH REDIRECT:', process.env.NEXTAUTH_URL);
-    return NextResponse.redirect(new URL('/app', req.url));
+    const url = new URL('/', req.url);
+    console.log('AUTH REDIRECT:', url);
+    return NextResponse.redirect(url);
   }
 
   if (req.nextUrl.pathname.startsWith('/app') && !token) {
-    console.log('AUTH REDIRECT:', process.env.NEXTAUTH_URL);
-    return NextResponse.redirect(process.env.NEXTAUTH_URL!);
+    const url = new URL('/', req.url);
+    console.log('AUTH REDIRECT:', url);
+    return NextResponse.redirect(url);
   }
 
   return response;

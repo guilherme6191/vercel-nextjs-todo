@@ -6,6 +6,7 @@ import { getTodos } from '@/lib/db.client';
 
 import { TodoAdd } from '@/components/todo-add';
 import { Todos } from '@/lib/xata.codegen.server';
+import { Card } from '@/components/ui/card';
 
 type Props = {
   userEmail: string;
@@ -24,11 +25,11 @@ export default function Todos({ initialTodos, userEmail }: Props) {
   );
 
   return (
-    <div className="flex flex-grow items-center justify-center">
-      <div className="shadow-lg shadow-cyan-500/50 w-[50%] h-full">
+    <main className="flex items-center justify-center">
+      <Card className="p-8 mt-2 sm:w-full md:w-1/2">
         <TodoAdd userEmail={userEmail} />
         <TodoList list={todoList} />
-      </div>
-    </div>
+      </Card>
+    </main>
   );
 }
