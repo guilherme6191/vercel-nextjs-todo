@@ -89,7 +89,6 @@ export function TodoList({ list }: { list: Todos[] }) {
         </li>
       ))}
       {isDeleteSuccess || isUpdateSuccess ? <SuccessToast /> : null}
-      <SuccessToast />
     </ul>
   );
 }

@@ -13,7 +13,7 @@ export default async function middleware(req: NextRequest) {
 
   // response.headers.set('Content-Security-Policy', csp);
   if (req.nextUrl.pathname == '/' && token) {
-    const url = new URL('/', req.url);
+    const url = new URL('/app', req.url);
     console.log('AUTH REDIRECT:', url);
     return NextResponse.redirect(url);
   }
