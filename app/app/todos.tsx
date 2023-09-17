@@ -1,9 +1,10 @@
 'use client';
 
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useQuery } from '@tanstack/react-query';
 import { TodoList } from '@/components/todo-list';
 import { getTodos } from '@/lib/db.client';
-
 import { TodoAdd } from '@/components/todo-add';
 import { Todos } from '@/lib/xata.codegen.server';
 import { Card } from '@/components/ui/card';

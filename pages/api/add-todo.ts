@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   // force an error for demonstration purposes
   if (newTodo.message === 'invalid') {
-    res.status(500).send({ message: 'Invalid todo' });
+    return res.status(500).send({ message: 'Invalid todo' });
   }
 
   const todo = await addTodo({ todo: newTodo, userEmail });

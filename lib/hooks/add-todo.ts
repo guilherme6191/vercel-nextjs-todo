@@ -11,9 +11,7 @@ export const useAddTodo = (userEmail: string) => {
 
       const previousTodos = queryClient.getQueryData<Todos[]>(['todos']);
       // optimistic update
-      queryClient.setQueryData(['todos'], (old: any) => 
-        [newTodo, ...old]
-      );
+      queryClient.setQueryData(['todos'], (old: any) => [newTodo, ...old]);
 
       return { previousTodos };
     },

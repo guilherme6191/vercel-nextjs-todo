@@ -22,7 +22,7 @@ export default async function Home() {
       </Menubar>
 
       <main className="flex w-screen h-screen items-center justify-center">
-        <Card>
+        <Card className="w-1/4">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">Login</CardTitle>
             <CardDescription>Access with:</CardDescription>
