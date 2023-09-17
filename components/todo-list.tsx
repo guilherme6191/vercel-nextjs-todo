@@ -1,11 +1,12 @@
 import { useDeleteTodo } from '@/lib/hooks/delete-todo';
 import { useUpdateTodo } from '@/lib/hooks/update-todo';
 import { SuccessToast } from './success-toast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Todos } from '@/lib/xata.codegen.server';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from './ui/button';
-import { Trash2Icon } from 'lucide-react';
+import { SearchIcon, Trash2Icon } from 'lucide-react';
+import { Input } from './ui/input';
 
 export function TodoList({ list }: { list: Todos[] }) {
   const {
@@ -20,6 +21,8 @@ export function TodoList({ list }: { list: Todos[] }) {
     reset: deleteReset,
     isLoading: isLoadingDelete,
   } = useDeleteTodo();
+  const [filterTerm, setFilterTerm] = useState('');
+  const filteredList = list.filter((item) => item.message?.toLowerCase().includes(filterTerm?.toLowerCase()));
 
   useEffect(() => {
     let clearMutation: NodeJS.Timeout | undefined = undefined;
@@ -43,7 +46,17 @@ export function TodoList({ list }: { list: Todos[] }) {
 
   return (
     <ul className="pt-14">
-      {list.map((item) => (
+      <div className="flex items-center space-x-2 mt-2">
+        <Input
+          type="text"
+          placeholder="Search"
+          className="pl-12 pr-4"
+          value={filterTerm}
+          onChange={(evt) => setFilterTerm(evt.target.value)}
+        />
+        <SearchIcon className="absolute w-6 h-6 text-gray-400" />
+      </div>
+      {filteredList.map((item) => (
         <li key={item.id} className="flex justify-between items-center py-1 my-4 border-b-2">
           <div className="flex items-center gap-2">
             <Checkbox
@@ -68,14 +81,15 @@ export function TodoList({ list }: { list: Todos[] }) {
               mutateDeleteTodo(item.id);
             }}
             variant="outline"
-            className="color-red"
+            className="color-red flex-shrink-0"
             size="icon"
           >
-            <Trash2Icon className="h-4 w-4 " />
+            <Trash2Icon className="h-4 w-4" />
           </Button>
         </li>
       ))}
       {isDeleteSuccess || isUpdateSuccess ? <SuccessToast /> : null}
+      <SuccessToast />
     </ul>
   );
 }

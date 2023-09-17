@@ -1,6 +1,6 @@
 export const SuccessToast = () => (
   <div
-    className="absolute flex items-center max-w-xs p-3 mb-4 border-2 rounded-lg right-5 bottom-6 animate-fade-in-down animate-fade-out"
+    className="absolute flex items-center max-w-xs p-2 mb-4 border-2 border-zinc-700 rounded-lg right-5 bottom-6 animate-fade-in-down animate-fade-out"
     role="alert"
   >
     <div className="inline-flex items-center justify-center flex-shrink-0 ">
