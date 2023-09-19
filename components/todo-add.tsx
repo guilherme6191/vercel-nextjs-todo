@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import { SuccessToast } from './success-toast';
 import { useAddTodo } from '@/lib/hooks/add-todo';
@@ -6,24 +6,28 @@ import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
 
 export function TodoAdd({ userEmail }: { userEmail: string }) {
-  const addTodo = useAddTodo(userEmail);
-  const [newTodoMessage, setNewTodoMessage] = useState('');
+  const { isSuccess, reset, isLoading, mutate, isError, error } = useAddTodo(userEmail);
+
+  const [newTodoMessage, _setNewTodoMessage] = useState('');
+  const setNewTodoMessage = useCallback((value: string) => {
+    _setNewTodoMessage(value);
+  }, []);
 
   useEffect(() => {
     let clearMutation: NodeJS.Timeout | undefined = undefined;
 
-    if (addTodo.isSuccess) {
+    if (isSuccess) {
       setNewTodoMessage('');
 
       clearMutation = setTimeout(() => {
-        addTodo.reset();
+        reset();
       }, 3000);
     }
 
     return () => {
       clearTimeout(clearMutation);
     };
-  }, [addTodo.isSuccess, addTodo]);
+  }, [isSuccess, setNewTodoMessage, reset]);
 
   return (
     <>
@@ -33,7 +37,7 @@ export function TodoAdd({ userEmail }: { userEmail: string }) {
           method="post"
           onSubmit={(evt) => {
             evt.preventDefault();
-            addTodo.mutate({
+            mutate({
               id: nanoid(),
               message: newTodoMessage,
               is_done: false,
@@ -52,20 +56,20 @@ export function TodoAdd({ userEmail }: { userEmail: string }) {
               placeholder="What needs to be done?"
               autoComplete="off"
               value={newTodoMessage}
-              readOnly={addTodo.isLoading}
+              readOnly={isLoading}
               onChange={(evt) => {
                 setNewTodoMessage(evt.currentTarget.value);
               }}
             />
-            <Button type="submit" variant="outline" disabled={addTodo.isLoading || newTodoMessage.length < 1}>
-              {addTodo.isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {addTodo.isLoading ? 'saving...' : 'save'}
+            <Button type="submit" variant="outline" disabled={isLoading || newTodoMessage.length < 1}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading ? 'saving...' : 'save'}
             </Button>
           </div>
-          {addTodo.isError && (
+          {isError && (
             <>
               <small className="text-red-400 my-2">
-                Server returned: <span className="font-mono">{addTodo.error?.message || 'Something went wrong!'}</span>
+                Server returned: <span className="font-mono">{error?.message || 'Something went wrong!'}</span>
               </small>
               <Button type="submit">Try again?</Button>
             </>
@@ -73,7 +77,7 @@ export function TodoAdd({ userEmail }: { userEmail: string }) {
         </form>
       </div>
 
-      {addTodo.isSuccess && <SuccessToast />}
+      {isSuccess && <SuccessToast />}
     </>
   );
 }
