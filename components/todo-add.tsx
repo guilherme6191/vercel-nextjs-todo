@@ -1,75 +1,54 @@
-import { useCallback, useEffect, useState } from 'react';
-import { nanoid } from 'nanoid';
+'use client';
+
+import { experimental_useOptimistic as useOptimistic, useCallback, useRef, useState, ReactEventHandler } from 'react';
 import { SuccessToast } from './success-toast';
-import { useAddTodo } from '@/lib/hooks/add-todo';
 import { Button } from './ui/button';
-import { Loader2 } from 'lucide-react';
+import { addTodoAction } from '@/app/actions';
+import { TodoButton } from './todo-button';
+import { TodoFormField } from './todo-form-field';
 
 export function TodoAdd({ userEmail }: { userEmail: string }) {
-  const { isSuccess, reset, isLoading, mutate, isError, error } = useAddTodo(userEmail);
+  const [error, setError] = useState('');
 
-  const [newTodoMessage, _setNewTodoMessage] = useState('');
-  const setNewTodoMessage = useCallback((value: string) => {
-    _setNewTodoMessage(value);
-  }, []);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [optIsSuccess, setOptIsSuccess] = useOptimistic(false, (_, newState: boolean) => newState);
 
-  useEffect(() => {
-    let clearMutation: NodeJS.Timeout | undefined = undefined;
-
-    if (isSuccess) {
-      setNewTodoMessage('');
-
-      clearMutation = setTimeout(() => {
-        reset();
-      }, 3000);
+  const onFormAction = async (ev: FormData) => {
+    const res = await addTodoAction(ev, userEmail);
+    if (res.error) {
+      setError(res.error);
     }
+    return res;
+  };
 
-    return () => {
-      clearTimeout(clearMutation);
-    };
-  }, [isSuccess, setNewTodoMessage, reset]);
+  const handleOnSubmit = () => {
+    setError('');
+  };
 
   return (
     <>
       <div className="flex justify-center">
         <form
           className="w-full flex justify-center flex-col"
-          method="post"
-          onSubmit={(evt) => {
-            evt.preventDefault();
-            mutate({
-              id: nanoid(),
-              message: newTodoMessage,
-              is_done: false,
-              created_at: new Date(),
-            });
+          ref={formRef}
+          id="add-todo-form"
+          name="add-todo-form"
+          onSubmit={handleOnSubmit}
+          action={async (form) => {
+            const { error } = await onFormAction(form);
+            if (!error) {
+              formRef.current?.reset();
+              setOptIsSuccess(true);
+            }
           }}
         >
-          <label htmlFor="add-todo" className="w-fit self-center text-xl my-2">
-            Add todo
-          </label>
-          <div className="flex items-center border-b py-2">
-            <input
-              id="add-todo"
-              className="appearance-none bg-transparent border-none w-full mr-3 py-1 px-2 leading-tight focus:outline-none"
-              type="text"
-              placeholder="What needs to be done?"
-              autoComplete="off"
-              value={newTodoMessage}
-              readOnly={isLoading}
-              onChange={(evt) => {
-                setNewTodoMessage(evt.currentTarget.value);
-              }}
-            />
-            <Button type="submit" variant="outline" disabled={isLoading || newTodoMessage.length < 1}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLoading ? 'saving...' : 'save'}
-            </Button>
-          </div>
-          {isError && (
+          <TodoFormField />
+          <TodoButton />
+
+          {error && (
             <>
               <small className="text-red-400 my-2">
-                Server returned: <span className="font-mono">{error?.message || 'Something went wrong!'}</span>
+                Server returned: <span className="font-mono">{error || 'Something went wrong!'}</span>
               </small>
               <Button type="submit">Try again?</Button>
             </>
@@ -77,7 +56,7 @@ export function TodoAdd({ userEmail }: { userEmail: string }) {
         </form>
       </div>
 
-      {isSuccess && <SuccessToast />}
+      {optIsSuccess && <SuccessToast />}
     </>
   );
 }

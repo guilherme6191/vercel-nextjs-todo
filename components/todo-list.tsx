@@ -1,48 +1,50 @@
-import { useDeleteTodo } from '@/lib/hooks/delete-todo';
-import { useUpdateTodo } from '@/lib/hooks/update-todo';
+'use client';
+
 import { SuccessToast } from './success-toast';
 import { useEffect, useState } from 'react';
-import { Todos } from '@/lib/xata.codegen.server';
+import { Todos, TodosRecord } from '@/lib/xata.codegen.server';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from './ui/button';
 import { SearchIcon, Trash2Icon } from 'lucide-react';
 import { Input } from './ui/input';
+import { SelectedPick } from '@xata.io/client';
+import { toggleTodo, deleteTodo } from '@/app/actions';
+import { experimental_useOptimistic as useOptimistic } from 'react';
 
-export function TodoList({ list }: { list: Todos[] }) {
-  const {
-    mutate: mutateTodo,
-    isSuccess: isUpdateSuccess,
-    reset: updateSuccess,
-    isLoading: isLoadingUpdate,
-  } = useUpdateTodo();
-  const {
-    mutate: mutateDeleteTodo,
-    isSuccess: isDeleteSuccess,
-    reset: deleteReset,
-    isLoading: isLoadingDelete,
-  } = useDeleteTodo();
+type Todo = Readonly<SelectedPick<TodosRecord, ['*']>>;
+
+type TProps = {
+  list: Todo[];
+  toggleTodo: typeof toggleTodo;
+  deleteTodo: typeof deleteTodo;
+};
+
+type TOptimisticAction = {
+  type: 'toggle' | 'delete';
+  item: Partial<Todo>;
+};
+
+export function TodoList({ list, toggleTodo, deleteTodo }: TProps) {
+  const [optList, optSetList] = useOptimistic(list, (state: Todo[], { type, item }: TOptimisticAction) => {
+    if (type === 'toggle') {
+      return state.map((todo) => {
+        if (todo.id === item.id) {
+          return {
+            ...todo,
+            is_done: Boolean(item.is_done),
+          };
+        }
+        return todo;
+      });
+    }
+    if (type === 'delete') {
+      return state.filter((todo) => todo.id !== item.id);
+    }
+    return state;
+  });
+
   const [filterTerm, setFilterTerm] = useState('');
-  const filteredList = list.filter((item) => item.message?.toLowerCase().includes(filterTerm?.toLowerCase()));
-
-  useEffect(() => {
-    let clearMutation: NodeJS.Timeout | undefined = undefined;
-
-    if (isDeleteSuccess) {
-      clearMutation = setTimeout(() => {
-        deleteReset();
-      }, 1000);
-    }
-
-    if (isUpdateSuccess) {
-      clearMutation = setTimeout(() => {
-        updateSuccess();
-      }, 1000);
-    }
-
-    return () => {
-      clearTimeout(clearMutation);
-    };
-  }, [isDeleteSuccess, isUpdateSuccess, deleteReset, updateSuccess]);
+  const filteredList = optList.filter((item) => item.message?.toLowerCase().includes(filterTerm?.toLowerCase()));
 
   return (
     <ul className="pt-14">
@@ -61,14 +63,10 @@ export function TodoList({ list }: { list: Todos[] }) {
           <div className="flex items-center gap-2">
             <Checkbox
               id={item.id}
-              defaultChecked={!!item.is_done}
-              disabled={isLoadingUpdate || isLoadingDelete}
+              checked={!!item.is_done}
               onCheckedChange={(isChecked) => {
-                mutateTodo({
-                  id: item.id,
-                  message: item.message!,
-                  checked: Boolean(isChecked),
-                });
+                optSetList({ type: 'toggle', item: { id: item.id, is_done: Boolean(isChecked) } });
+                toggleTodo(item.id, Boolean(isChecked));
               }}
             />
             <label htmlFor={item.id} className={`${item.is_done ? 'line-through' : ''}`}>
@@ -78,7 +76,8 @@ export function TodoList({ list }: { list: Todos[] }) {
 
           <Button
             onClick={() => {
-              mutateDeleteTodo(item.id);
+              optSetList({ type: 'delete', item: { id: item.id } });
+              deleteTodo(item.id);
             }}
             variant="outline"
             className="color-red flex-shrink-0"
@@ -88,7 +87,7 @@ export function TodoList({ list }: { list: Todos[] }) {
           </Button>
         </li>
       ))}
-      {isDeleteSuccess || isUpdateSuccess ? <SuccessToast /> : null}
+      {/* {isDeleteSuccess || isUpdateSuccess ? <SuccessToast /> : null} */}
     </ul>
   );
 }
