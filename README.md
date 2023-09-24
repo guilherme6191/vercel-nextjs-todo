@@ -2,9 +2,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 It's a study case running with xata + shadcn/ui (tailwind, radix) + nextjs 13 app dir + vercel + server actions.
 
-## Prod 
+## App preview
 
-[https://vercel-nextjs-pink-mu.vercel.app/](https://vercel-nextjs-pink-mu.vercel.app/)
+[https://vercel-nextjs-todo-git-server-actions-guilherme6191.vercel.app/](https://vercel-nextjs-todo-git-server-actions-guilherme6191.vercel.app/)
 ## Getting Started
 
 First, run the development server:
