@@ -15,7 +15,7 @@ export function TodoInput() {
       <Label htmlFor="add-todo" className="w-fit self-center text-xl my-2">
         Add todo
       </Label>
-      <div className="flex items-center border-b py-2">
+      <div className="flex items-center py-2">
         <Input
           id="add-todo"
           name="message"
