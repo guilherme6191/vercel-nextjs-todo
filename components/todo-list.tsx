@@ -1,50 +1,25 @@
 'use client';
 
-import { SuccessToast } from './success-toast';
-import { useEffect, useState } from 'react';
-import { Todos, TodosRecord } from '@/lib/xata.codegen.server';
+import { useContext, useState } from 'react';
+import { Todos } from '@/lib/xata.codegen.server';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from './ui/button';
 import { SearchIcon, Trash2Icon } from 'lucide-react';
 import { Input } from './ui/input';
-import { SelectedPick } from '@xata.io/client';
 import { toggleTodo, deleteTodo } from '@/app/actions';
-import { experimental_useOptimistic as useOptimistic } from 'react';
-
-type Todo = Readonly<SelectedPick<TodosRecord, ['*']>>;
+import { TodoFormContext } from './todo-form/root';
 
 type TProps = {
-  list: Todo[];
   toggleTodo: typeof toggleTodo;
   deleteTodo: typeof deleteTodo;
 };
 
-type TOptimisticAction = {
-  type: 'toggle' | 'delete';
-  item: Partial<Todo>;
-};
-
-export function TodoList({ list, toggleTodo, deleteTodo }: TProps) {
-  const [optList, optSetList] = useOptimistic(list, (state: Todo[], { type, item }: TOptimisticAction) => {
-    if (type === 'toggle') {
-      return state.map((todo) => {
-        if (todo.id === item.id) {
-          return {
-            ...todo,
-            is_done: Boolean(item.is_done),
-          };
-        }
-        return todo;
-      });
-    }
-    if (type === 'delete') {
-      return state.filter((todo) => todo.id !== item.id);
-    }
-    return state;
-  });
-
+export function TodoList({ toggleTodo, deleteTodo }: TProps) {
+  const { todoList, optSetList, setOptIsSuccess } = useContext(TodoFormContext);
   const [filterTerm, setFilterTerm] = useState('');
-  const filteredList = optList.filter((item) => item.message?.toLowerCase().includes(filterTerm?.toLowerCase()));
+  const filteredList = todoList.filter((item: Todos) =>
+    item.message?.toLowerCase().includes(filterTerm?.toLowerCase())
+  );
 
   return (
     <ul className="pt-14">
@@ -58,7 +33,7 @@ export function TodoList({ list, toggleTodo, deleteTodo }: TProps) {
         />
         <SearchIcon className="absolute w-6 h-6 text-gray-400" />
       </div>
-      {filteredList.map((item) => (
+      {filteredList.map((item: Todos) => (
         <li key={item.id} className="flex justify-between items-center py-1 my-4 border-b-2">
           <div className="flex items-center gap-2">
             <Checkbox
@@ -66,6 +41,7 @@ export function TodoList({ list, toggleTodo, deleteTodo }: TProps) {
               checked={!!item.is_done}
               onCheckedChange={(isChecked) => {
                 optSetList({ type: 'toggle', item: { id: item.id, is_done: Boolean(isChecked) } });
+                setOptIsSuccess(true);
                 toggleTodo(item.id, Boolean(isChecked));
               }}
             />
@@ -77,6 +53,7 @@ export function TodoList({ list, toggleTodo, deleteTodo }: TProps) {
           <Button
             onClick={() => {
               optSetList({ type: 'delete', item: { id: item.id } });
+              setOptIsSuccess(true);
               deleteTodo(item.id);
             }}
             variant="outline"
@@ -87,7 +64,6 @@ export function TodoList({ list, toggleTodo, deleteTodo }: TProps) {
           </Button>
         </li>
       ))}
-      {/* {isDeleteSuccess || isUpdateSuccess ? <SuccessToast /> : null} */}
     </ul>
   );
 }
