@@ -5,6 +5,11 @@ It's a study case running with xata + shadcn/ui (tailwind, radix) + nextjs 13 ap
 ## Prod 
 
 [https://vercel-nextjs-pink-mu.vercel.app/](https://vercel-nextjs-pink-mu.vercel.app/)
+
+## Preview with server actions
+
+Branch: [https://github.com/guilherme6191/vercel-nextjs-todo/tree/server-actions](https://github.com/guilherme6191/vercel-nextjs-todo/tree/server-actions)
+[https://vercel-nextjs-todo-git-server-actions-guilherme6191.vercel.app/](https://vercel-nextjs-todo-git-server-actions-guilherme6191.vercel.app/)
 ## Getting Started
 
 First, run the development server:
